@@ -1,53 +1,47 @@
+
 using TMPro;
 using UnityEngine;
 
 public class Score : MonoBehaviour
 {
     public TextMeshProUGUI scoreText;
+
     private float startTime;
+    private float highScore;
 
-    void Start()
+    private const string HighScoreKey = "HighScore";
+
+    private void Start()
     {
-        // Record the initial time when the game starts
         startTime = Time.time;
-
-        // Load the high score from PlayerPrefs and display it
-        float highScore = PlayerPrefs.GetFloat("HighScore", 0f);
-        string formattedHighScore = FormatTime(highScore);
-        scoreText.text = "High Score: " + formattedHighScore;
+        highScore = PlayerPrefs.GetFloat(HighScoreKey, 0f);
     }
 
-    void Update()
+    private void Update()
     {
-        // Calculate the elapsed time since the game started
+        if (scoreText == null)
+            return;
+
         float elapsedTime = Time.time - startTime;
 
-        // Format the time as minutes and seconds
-        string formattedTime = FormatTime(elapsedTime);
+        scoreText.text = "Time: " + FormatTime(elapsedTime);
 
-        // Display the formatted time in the UI Text component
-        scoreText.text = "Time: " + formattedTime;
-
-        // Check if the current time is greater than the stored high score
-        if (elapsedTime > PlayerPrefs.GetFloat("HighScore", 0f))
+        if (elapsedTime > highScore)
         {
-            // Update the high score in PlayerPrefs
-            PlayerPrefs.SetFloat("HighScore", elapsedTime);
-            PlayerPrefs.Save();
+            highScore = elapsedTime;
 
-            // Update the displayed high score
-            string formattedHighScore = FormatTime(elapsedTime);
-            scoreText.text = "High Score: " + formattedHighScore;
+            PlayerPrefs.SetFloat(HighScoreKey, highScore);
+            PlayerPrefs.Save();
         }
     }
 
-    // Helper method to format time as minutes and seconds
     public static string FormatTime(float timeInSeconds)
     {
-        int minutes = Mathf.FloorToInt(timeInSeconds / 60f);
-        int seconds = Mathf.FloorToInt(timeInSeconds % 60f);
-        string s = string.Format("{0:00}:{1:00}", minutes, seconds);
+        int totalSeconds = Mathf.Max(0, Mathf.FloorToInt(timeInSeconds));
 
-        return s;
+        int minutes = totalSeconds / 60;
+        int seconds = totalSeconds % 60;
+
+        return string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 }

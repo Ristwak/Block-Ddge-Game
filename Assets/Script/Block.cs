@@ -1,16 +1,24 @@
+
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class Block : MonoBehaviour
 {
+    private Rigidbody2D rb;
 
-    void Start()
+    private void Awake()
     {
-        GetComponent<Rigidbody2D>().gravityScale += Time.timeSinceLevelLoad / 20f;
+        rb = GetComponent<Rigidbody2D>();
     }
 
-    void Update()
+    private void Start()
     {
-        if(transform.position.y < -2f)
+        rb.gravityScale += Time.timeSinceLevelLoad / 20f;
+    }
+
+    private void Update()
+    {
+        if (transform.position.y < -2f)
         {
             Destroy(gameObject);
         }

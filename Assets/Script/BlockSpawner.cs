@@ -1,3 +1,4 @@
+
 using UnityEngine;
 
 public class BlockSpawner : MonoBehaviour
@@ -6,24 +7,40 @@ public class BlockSpawner : MonoBehaviour
     public GameObject blockprefab;
     public float timeBetweenWaves = 1f;
     public float timeToSpawn = 2f;
-    // Update is called once per frame
+
     private void Update()
     {
-        if(Time.time >= timeToSpawn)
+        if (Time.time >= timeToSpawn)
         {
             SpawnBlocks();
             timeToSpawn = Time.time + timeBetweenWaves;
         }
     }
-    void SpawnBlocks()
+
+    private void SpawnBlocks()
     {
+        if (spawnPoints == null || spawnPoints.Length == 0)
+            return;
+
+        if (blockprefab == null)
+        {
+            Debug.LogWarning("Block prefab is not assigned.", this);
+            return;
+        }
+
         int randomIndex = Random.Range(0, spawnPoints.Length);
+
         for (int i = 0; i < spawnPoints.Length; i++)
         {
-            if(randomIndex != i)
-            {
-                Instantiate(blockprefab, spawnPoints[i].position, Quaternion.identity);
-            }
+            if (i == randomIndex || spawnPoints[i] == null)
+                continue;
+
+            Instantiate(
+                blockprefab,
+                spawnPoints[i].position,
+                Quaternion.identity
+            );
         }
     }
 }
+

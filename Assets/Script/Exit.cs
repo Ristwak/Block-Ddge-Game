@@ -1,3 +1,4 @@
+
 using TMPro;
 using UnityEngine;
 
@@ -5,16 +6,25 @@ public class Exit : MonoBehaviour
 {
     public TextMeshProUGUI scoreText;
 
+    private void Start()
+    {
+        if (scoreText == null)
+        {
+            Debug.LogWarning("Score Text reference is missing.", this);
+            return;
+        }
+
+        float highScore = PlayerPrefs.GetFloat("HighScore", 0f);
+
+        scoreText.text = "High Score: " + Score.FormatTime(highScore);
+    }
+
     public void Quit()
     {
         Application.Quit();
-    }
 
-    void Start()
-    {
-        // Load the high score from PlayerPrefs and display it
-        float highScore = PlayerPrefs.GetFloat("HighScore", 0f);
-        string formattedHighScore = Score.FormatTime(highScore);
-        scoreText.text = "High Score: " + formattedHighScore;
+#if UNITY_EDITOR
+        Debug.Log("Quit requested. Application.Quit does not close the Unity Editor.");
+#endif
     }
 }
